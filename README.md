@@ -1,7 +1,7 @@
-Role Name
+waal70.authentik
 =========
 
-A brief description of the role goes here.
+This role will deploy and configure Authentik into a Portainer install
 
 Requirements
 ------------
@@ -16,7 +16,7 @@ A description of the settable variables for this role should go here, including 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+waal70.portainer
 
 Example Playbook
 ----------------
@@ -30,9 +30,11 @@ Including an example of how to use your role (for instance, with variables passe
 License
 -------
 
-BSD
+[GPLv3](https://www.gnu.org/licenses/gpl-3.0.html#license-text)
 
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Unless otherwise noted, this entire repository is (c) 2025 by André (waal70). [See github profile](https://github.com/waal70)
+
+Please contact me if you need a commercial license for any of these files

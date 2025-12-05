@@ -1,3 +1,47 @@
-#SPDX-License-Identifier: MIT-0
 ---
-# tasks file for waal70.authentik
+- name: Include vaulted password file
+  ansible.builtin.set_fact:
+    env_file: "{{ lookup('ansible.builtin.first_found', files, skip=True) }}"
+  vars:
+    files:
+      - "{{ lookup('env', 'PRIVATE_REPO') | default('~') }}/ansible-vault/{{ ansible_role_name }}.env"
+      - "{{ role_path }}/templates/{{ ansible_role_name }}.env"
+
+- name: Debug env_file
+  ansible.builtin.debug:
+    msg: "Basing environment upon: {{ env_file }}"
+
+- name: "Slurp authentik env file"
+  ansible.builtin.slurp:
+    src: "{{ env_file }}"
+  register: authentik_env_file_content
+  delegate_to: localhost
+  when: env_file | length > 0
+
+- name: "Parse file content to JSON"
+  ansible.builtin.set_fact:
+    authentik_env_content: "{{ authentik_env_file_content['content'] | b64decode | split('\n') | default([]) }}"
+
+- name: "Create proper dictionary"
+  ansible.builtin.set_fact:
+    dict_var: "{{ dict_var | default([]) + [{'name': item.split('=') | first, 'value': item.split('=') | last}] }}"
+  with_items: "{{ authentik_env_content }}"
+
+- name: "Template the authentik.yml file to the role's files/ directory"
+  ansible.builtin.template:
+    src: authentik.yml.j2
+    dest: "{{ role_path }}/files/authentik.yml"
+    owner: "{{ interactive_user }}"
+    group: "{{ interactive_user }}"
+    mode: '0644'
+    force: true
+  delegate_to: localhost
+
+# - name: "Include role to deploy authentik to Portainer"
+#   ansible.builtin.include_role:
+#     name: waal70.portainer
+#   vars:
+#     stack_list:
+#       - name: authentik
+#         file: authentik.yml # file is in files/ of this role
+#         env: "{{ dict_var }}"
