@@ -37,11 +37,15 @@
     force: true
   delegate_to: localhost
 
-# - name: "Include role to deploy authentik to Portainer"
-#   ansible.builtin.include_role:
-#     name: waal70.portainer
-#   vars:
-#     stack_list:
-#       - name: authentik
-#         file: authentik.yml # file is in files/ of this role
-#         env: "{{ dict_var }}"
+- name: "Include role to deploy authentik to Portainer"
+  ansible.builtin.include_role:
+    name: waal70.portainer
+  vars:
+    stack_list:
+      - name: authentik
+        file: authentik.yml # file is in files/ of this role
+        env: "{{ dict_var }}"
+
+- name: "Include authentik database export tasks if requested"
+  ansible.builtin.include_tasks: auth-export.yml
+  when: auth_export | bool or auth_export_schedule | bool

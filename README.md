@@ -6,12 +6,29 @@ This role will deploy and configure Authentik into a Portainer install
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+Authentik will be deployed through Portainer, as described in waal70.portainer. That role makes use of waal70.docker.
 
-Role Variables
---------------
+## Backup and restore
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+* Backup /media folder: holds icons, flow backgrounds and uploaded files
+* Optional: backup /certs, /custom-templates and /blueprints, but only if you use them
+* Make sure nobody is actively using authentik. To be absolutely sure, you may stop all stack containers, except the db
+* Go into the console for the database image of portainer and cd into the dbdumps folder (```cd /dbdumps```)
+* Perform ```pg_dump authentik -U authentik > backupdump.sql```
+* Exit the Portainer db console and move into the SSH console
+* Secure the backupdump.sql in a good place
+
+## Performing the actual restore with aid of this role
+
+* Install authentik through this role onto a fresh server instance.
+* Let the containers come to a full start (```healthy```) so that all defaults may be initialized
+* Stop all containers of the stack in Portainer, except the db. Do not stop the stack as your containers will disappear!
+* In your shell, move the database dump into the volume mapping (```mv backupdump.sql /appdata/authentik/dbdumps/```)
+* Open a console in Portainer to the database container. Move into the dbdumps folder (```cd /dbdumps```)
+* Drop the existing database: ```dropdb authentik -U authentik```
+* Create an empty database: ```createdb -T template0 authentik -U authentik```
+* Perform a restore: ```psql -X authentik < backupdump.sql```
+* Start the complete stack and enjoy your restored Authentik!
 
 Dependencies
 ------------

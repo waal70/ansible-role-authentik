@@ -1,3 +1,5 @@
-#SPDX-License-Identifier: MIT-0
 ---
 # defaults file for waal70.authentik
+auth_export_cmd: /bin/sh -c 'pg_dump authentik -U authentik > /dbdumps/dbbackup-$(date +"%Y%m%d-%H%M%S").sql'
+auth_export: false # run a one-time export of the authentik database
+auth_export_schedule: true # schedule a daily export of the authentik database

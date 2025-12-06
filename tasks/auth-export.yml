@@ -1,0 +1,33 @@
+---
+- name: "Set fact for user to run docker exec under"
+  ansible.builtin.set_fact:
+    docker_exec_user: "{{ ansible_env.SUDO_USER | default(ansible_env.USER, true) | default(ansible_user_id, true) }}"
+
+- name: Debug the backup command
+  ansible.builtin.debug:
+    msg: "The authentik export command is: {{ auth_export_cmd }}"
+
+
+- name: Run the command that will export the authentik database
+  community.docker.docker_container_exec:
+    container: authentik-db
+    command: "{{ auth_export_cmd }}"
+    docker_host: unix:///run/docker.sock
+  register: export_result
+  become: true
+  become_user: "{{ docker_exec_user }}"
+  when: auth_export | bool
+
+# Cron does not like % signs, so we need to escape them
+- name: "Schedule a regular export in cron"
+  ansible.builtin.cron:
+    name: "authentik-db export"
+    weekday: "*"
+    minute: "30"
+    hour: "5"
+    month: "*"
+    day: "*"
+    user: "{{ docker_exec_user }}"
+    job: /usr/bin/docker exec -t authentik-db {{ auth_export_cmd | replace('%', '\%') }} >> /home/{{ docker_exec_user }}/crontab.log
+    state: "present"
+  when: auth_export_schedule | bool
