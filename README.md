@@ -27,7 +27,7 @@ Authentik will be deployed through Portainer, as described in waal70.portainer. 
 * Open a console in Portainer to the database container. Move into the dbdumps folder (```cd /dbdumps```)
 * Drop the existing database: ```dropdb authentik -U authentik```
 * Create an empty database: ```createdb -T template0 authentik -U authentik```
-* Perform a restore: ```psql -X authentik < backupdump.sql```
+* Perform a restore: ```psql -X authentik -U authentik < backupdump.sql```
 * Start the complete stack and enjoy your restored Authentik!
 
 Dependencies
