@@ -21,6 +21,8 @@ services:
     - /data/authentik/pgdata:/var/lib/postgresql/data
     # Andre added this mapping in order to be able to do DB dumps from the host
     - /appdata/authentik/dbdumps:/dbdumps
+    networks:
+      - authentik_network
   server:
     command: server
     depends_on:
@@ -45,6 +47,9 @@ services:
     volumes:
     - /appdata/authentik/media:/media
     - /appdata/authentik/custom-templates:/templates
+    networks:
+      - default
+      - authentik_network
   worker:
     command: worker
     depends_on:
@@ -66,6 +71,14 @@ services:
     - /appdata/authentik/media:/media
     - /appdata/authentik/certs:/certs
     - /appdata/authentik/custom-templates:/templates
+    networks:
+      - authentik_network
 volumes:
   database:
     driver: local
+networks:
+  default:
+    external: true
+    name: reverse-proxy
+  authentik_network:
+    name: authentik
