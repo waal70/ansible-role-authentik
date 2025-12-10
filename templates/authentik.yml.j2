@@ -21,6 +21,14 @@ services:
     - /data/authentik/pgdata:/var/lib/postgresql/data
     # Andre added this mapping in order to be able to do DB dumps from the host
     - /appdata/authentik/dbdumps:/dbdumps
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
     networks:
       - authentik_network
   server:
@@ -39,6 +47,7 @@ services:
       AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS}
       AUTHENTIK_POSTGRESQL__USER: ${PG_USER:-authentik}
       AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY:?secret key required}
+      AUTHENTIK_LOG_LEVEL: ${AUTHENTIK_LOG_LEVEL:-WARNING}
     image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server}:${AUTHENTIK_TAG:-2025.10.2}
     ports:
     - ${COMPOSE_PORT_HTTP:-9000}:9000
@@ -47,6 +56,14 @@ services:
     volumes:
     - /appdata/authentik/media:/media
     - /appdata/authentik/custom-templates:/templates
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
     networks:
       - default
       - authentik_network
@@ -63,6 +80,7 @@ services:
       AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS}
       AUTHENTIK_POSTGRESQL__USER: ${PG_USER:-authentik}
       AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY:?secret key required}
+      AUTHENTIK_LOG_LEVEL: ${AUTHENTIK_LOG_LEVEL:-WARNING}
     image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server}:${AUTHENTIK_TAG:-2025.10.2}
     restart: unless-stopped
     user: root
@@ -71,6 +89,14 @@ services:
     - /appdata/authentik/media:/media
     - /appdata/authentik/certs:/certs
     - /appdata/authentik/custom-templates:/templates
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
     networks:
       - authentik_network
 volumes:
