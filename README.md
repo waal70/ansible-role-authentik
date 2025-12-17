@@ -8,7 +8,8 @@ Requirements
 
 Authentik will be deployed through Portainer, as described in waal70.portainer. That role makes use of waal70.docker.
 
-## Backup and restore
+Backup and restore
+------------------
 
 * Backup /media folder: holds icons, flow backgrounds and uploaded files
 * Optional: backup /certs, /custom-templates and /blueprints, but only if you use them
@@ -18,7 +19,8 @@ Authentik will be deployed through Portainer, as described in waal70.portainer. 
 * Exit the Portainer db console and move into the SSH console
 * Secure the backupdump.sql in a good place
 
-## Performing the actual restore with aid of this role
+Performing the actual restore with aid of this role
+---------------------------------------------------
 
 * Install authentik through this role onto a fresh server instance.
 * Let the containers come to a full start (```healthy```) so that all defaults may be initialized
