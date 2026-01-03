@@ -49,9 +49,10 @@ services:
       AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY:?secret key required}
       AUTHENTIK_LOG_LEVEL: ${AUTHENTIK_LOG_LEVEL:-WARNING}
     image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server}:${AUTHENTIK_TAG:-2025.10.2}
-    ports:
-    - ${COMPOSE_PORT_HTTP:-9000}:9000
-    - ${COMPOSE_PORT_HTTPS:-9443}:9443
+    # Uncomment the following lines to expose ports directly (not recommended if using a reverse proxy)
+    # ports:
+    # - ${COMPOSE_PORT_HTTP:-9000}:9000
+    # - ${COMPOSE_PORT_HTTPS:-9443}:9443
     restart: unless-stopped
     volumes:
     - /appdata/authentik/media:/media
